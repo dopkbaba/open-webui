@@ -24,6 +24,7 @@ VERSION = "0.1.0"
 
 # Personal note: I run this locally on port 5174 (Vite sometimes picks it when
 # 5173 is already occupied), so added it to the default CORS origins list.
+# Also added 5175 since I've seen Vite bump to that too on my machine.
 EXTRA_CORS_ORIGINS = [
     origin.strip()
     for origin in os.environ.get("EXTRA_CORS_ORIGINS", "").split(",")
@@ -60,6 +61,7 @@ app.add_middleware(
         FRONTEND_URL,
         "http://localhost:3000",
         "http://localhost:5174",  # fallback Vite dev server port
+        "http://localhost:5175",  # Vite sometimes increments again if 5174 is taken
         "http://localhost:8080",
         *EXTRA_CORS_ORIGINS,
     ],
@@ -93,11 +95,4 @@ async def get_version():
 
 # ---------------------------------------------------------------------------
 # Router registration (routers will be added as the project grows)
-# ---------------------------------------------------------------------------
-# from apps.auth.routers import router as auth_router
-# from apps.chat.routers import router as chat_router
-# from apps.models.routers import router as models_router
-#
-# app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
-# app.include_router(chat_router, prefix="/api/v1/chat", tags=["chat"])
-# app.include_router(models_router, prefix="/ap
+# -------------------------------------------------
