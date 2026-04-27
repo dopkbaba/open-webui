@@ -22,6 +22,14 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 SECRET_KEY = os.environ.get("SECRET_KEY", "open-webui-secret-key")
 VERSION = "0.1.0"
 
+# Personal note: I run this locally on port 5174 (Vite sometimes picks it when
+# 5173 is already occupied), so added it to the default CORS origins list.
+EXTRA_CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("EXTRA_CORS_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -51,7 +59,9 @@ app.add_middleware(
     allow_origins=[
         FRONTEND_URL,
         "http://localhost:3000",
+        "http://localhost:5174",  # fallback Vite dev server port
         "http://localhost:8080",
+        *EXTRA_CORS_ORIGINS,
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -90,16 +100,4 @@ async def get_version():
 #
 # app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 # app.include_router(chat_router, prefix="/api/v1/chat", tags=["chat"])
-# app.include_router(models_router, prefix="/api/v1/models", tags=["models"])
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 8080)),
-        reload=ENV == "dev",
-        log_level="info",
-    )
+# app.include_router(models_router, prefix="/ap
