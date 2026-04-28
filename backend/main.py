@@ -52,7 +52,9 @@ app = FastAPI(
 )
 
 # Session middleware
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+# Personal note: bumped max_age from the default (2 weeks) to 7 days so my
+# local sessions expire sooner — easier to test the login flow repeatedly.
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, max_age=60 * 60 * 24 * 7)
 
 # CORS middleware — allow frontend origin in development
 app.add_middleware(
@@ -93,6 +95,4 @@ async def get_version():
     return {"version": VERSION}
 
 
-# ---------------------------------------------------------------------------
-# Router registration (routers will be added as the project grows)
-# -------------------------------------------------
+# --------------------------------------
